@@ -1,5 +1,5 @@
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 import { Type, DynamicModule, ForwardReference } from '@nestjs/common';
+import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 
 export interface AwsServiceType<AwsService> {
   new (options: ServiceConfigurationOptions): AwsService;

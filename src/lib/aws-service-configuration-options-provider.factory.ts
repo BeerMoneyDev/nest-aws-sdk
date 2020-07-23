@@ -1,6 +1,6 @@
+import { Provider } from '@nestjs/common';
 import { AwsServiceConfigurationOptionsFactoryProvider } from './types';
 import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
-import { Provider } from '@nestjs/common';
 
 export function createAwsServiceConfigurationOptionsProvider(
   defaultServiceOptions?: AwsServiceConfigurationOptionsFactoryProvider,

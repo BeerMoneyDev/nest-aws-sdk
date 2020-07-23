@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
-import { AwsService, AwsServiceType } from './types';
 import { getAwsServiceToken } from './tokens';
+import { AwsService, AwsServiceType } from './types';
 
 export const InjectAwsService = (
   serviceConstructor: AwsServiceType<AwsService>,

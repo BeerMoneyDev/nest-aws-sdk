@@ -75,7 +75,7 @@ describe('createAwsServiceConfigurationOptionsProvider()', () => {
       imports,
       provider,
     } = createAwsServiceConfigurationOptionsProvider({
-      useFactory: (fs: FakeService) => {
+      useFactory: () => {
         return { computeChecksums: true };
       },
       inject: [FakeService],

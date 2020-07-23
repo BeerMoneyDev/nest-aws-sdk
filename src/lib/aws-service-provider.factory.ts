@@ -1,16 +1,16 @@
 import { FactoryProvider } from '@nestjs/common';
+import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
+import { AwsServiceFactory } from './aws-service.factory';
 import {
   getAwsServiceToken,
   AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
 } from './tokens';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 import {
   AwsService,
   AwsServiceType,
   AwsServiceConfigurationOptionsFactory,
   AwsServiceWithServiceOptions,
 } from './types';
-import { AwsServiceFactory } from './aws-service.factory';
 
 export function createAwsServiceProvider(
   serviceDetails: AwsServiceType<AwsService> | AwsServiceWithServiceOptions,
