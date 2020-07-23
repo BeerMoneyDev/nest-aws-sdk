@@ -77,5 +77,8 @@
   ],
   "files": [
     "dist"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://npm.fury.io/kerryritter/"
+  }
 }

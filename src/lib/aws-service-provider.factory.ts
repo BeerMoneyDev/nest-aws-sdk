@@ -8,22 +8,38 @@ import {
   AwsService,
   AwsServiceType,
   AwsServiceConfigurationOptionsFactory,
+  AwsServiceWithServiceOptions,
 } from './types';
 import { AwsServiceFactory } from './aws-service.factory';
 
 export function createAwsServiceProvider(
-  service: AwsServiceType<AwsService>,
+  serviceDetails: AwsServiceType<AwsService> | AwsServiceWithServiceOptions,
 ): FactoryProvider<AwsService> {
+  let service: AwsServiceType<AwsService>;
+  let serviceOptionsOverride: AwsServiceConfigurationOptionsFactory;
+
+  const asWithOptions = serviceDetails as AwsServiceWithServiceOptions;
+  if (asWithOptions.service) {
+    service = asWithOptions.service;
+    serviceOptionsOverride = asWithOptions.serviceOptions;
+  } else {
+    service = serviceDetails as AwsServiceType<AwsService>;
+  }
+
   return {
     provide: getAwsServiceToken(service),
     useFactory: (
       serviceFactory: AwsServiceFactory,
       optionsFactory: AwsServiceConfigurationOptionsFactory,
     ) => {
+      const optionsFactoryToUse = serviceOptionsOverride
+        ? serviceOptionsOverride
+        : optionsFactory;
+
       const defaultServiceOptions: Partial<ServiceConfigurationOptions> =
-        optionsFactory && typeof optionsFactory === 'function'
-          ? (optionsFactory() as any)
-          : optionsFactory;
+        optionsFactoryToUse && typeof optionsFactoryToUse === 'function'
+          ? (optionsFactoryToUse() as any)
+          : optionsFactoryToUse;
 
       return serviceFactory.create(service, defaultServiceOptions);
     },

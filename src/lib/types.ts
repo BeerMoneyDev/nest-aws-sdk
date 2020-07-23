@@ -7,6 +7,11 @@ export interface AwsServiceType<AwsService> {
 
 export type AwsService = any;
 
+export type AwsServiceWithServiceOptions = {
+  service: AwsServiceType<AwsService>;
+  serviceOptions: AwsServiceConfigurationOptionsFactory;
+};
+
 export type AwsServiceConfigurationOptionsFactory =
   | Partial<ServiceConfigurationOptions>
   | (() => Partial<ServiceConfigurationOptions>);

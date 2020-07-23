@@ -1,4 +1,4 @@
-import { Injectable, Module, Optional } from '@nestjs/common';
+import { Injectable, Module } from '@nestjs/common';
 import {
   InjectAwsService,
   AwsSdkModule,
