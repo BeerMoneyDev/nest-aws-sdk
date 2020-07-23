@@ -1,9 +1,13 @@
-import { getAwsServiceToken } from './aws-service.decorator';
-import { S3, CloudFront } from 'aws-sdk';
+import { InjectAwsService } from './aws-service.decorator';
+import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 
-describe('getAwsServiceToken()', () => {
-  it('should create expected token', () => {
-    expect(getAwsServiceToken(S3)).toEqual('AWS_SERVICE_S3');
-    expect(getAwsServiceToken(CloudFront)).toEqual('AWS_SERVICE_CLOUDFRONT');
+class FakeAwsService {
+  constructor(readonly options: ServiceConfigurationOptions) {}
+}
+
+describe('InjectAwsService', () => {
+  it('should wrap the @Inject decorator with the token passed in', () => {
+    const result = InjectAwsService(FakeAwsService);
+    expect(result.name).toBeDefined();
   });
 });

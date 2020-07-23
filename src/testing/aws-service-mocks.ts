@@ -1,5 +1,5 @@
 import { AwsService } from '../lib/types';
-import { getAwsServiceToken } from '../lib/aws-service.decorator';
+import { getAwsServiceToken } from '../lib/tokens';
 
 export function createAwsServiceMock(mockOptions: {
   provide: AwsService;

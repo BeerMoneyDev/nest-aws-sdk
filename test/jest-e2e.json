@@ -9,9 +9,5 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
-  },
-  "moduleNameMapper": {
-    "@app/nest-aws-sdk/(.*)": "<rootDir>/../libs/nest-aws-sdk/src/$1",
-    "@app/nest-aws-sdk": "<rootDir>/../libs/nest-aws-sdk/src"
   }
 }

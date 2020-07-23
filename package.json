@@ -1,6 +1,6 @@
 {
   "name": "nest-aws-sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A thin wrapping module around the AWS SDK",
   "author": "Kerry Ritter",
   "license": "MIT",
@@ -61,13 +61,8 @@
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/src/",
-      "<rootDir>/libs/"
-    ],
-    "moduleNameMapper": {
-      "@app/nest-aws-sdk/(.*)": "<rootDir>/libs/nest-aws-sdk/src/$1",
-      "@app/nest-aws-sdk": "<rootDir>/libs/nest-aws-sdk/src"
-    }
+      "<rootDir>/src/"
+    ]
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
