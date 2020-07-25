@@ -1,6 +1,6 @@
 <h1 align="center">nest-aws-sdk</h1>
 <div align="center">
-  <img src="" />
+  <img src="https://beermoneydev-assets.s3.amazonaws.com/nest-aws-sdk-logo.png" />
 </div>
 <br />
 <div align="center">
@@ -15,6 +15,12 @@
 * Helper test tools for creating mocked AWS clients.
 
 # How To Use
+
+## Install
+
+```bash
+npm install --save nest-aws-sdk aws-sdk
+```
 
 ## Basic Usage
 
@@ -124,7 +130,7 @@ describe('S3ManagerService', () => {
 });
 ```
 
-## forRoot
+## AwsSdkModule.forRoot()
 
 `AwsSdkModule.forRoot()` currently supports two types of instantiation: 'useFactory' and 'useValue'. Support for ClassProvider and ExistingProvider coming soon.
 
@@ -211,7 +217,7 @@ import { ConfigService, ConfigModule } from './config';
 })
 ```
 
-## forFeatures
+## AwsSdkModule.forFeatures()
 
 `AwsSdkModule.forFeatures()` creates the providers for the AWS clients you wish to use. This is not global, so the clients will need to be provided for each module.
 
@@ -329,7 +335,7 @@ it('should call the list method and return the Content keys', async () => {
 
 # Stay In Touch
 
-* Author - [Kerry Ritter](https://twitter.com/kerryritter)
+* Author - [Kerry Ritter](https://twitter.com/kerryritter) and BeerMoneyDev
 
 ## License
 
