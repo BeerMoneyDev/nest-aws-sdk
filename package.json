@@ -1,9 +1,27 @@
 {
   "name": "nest-aws-sdk",
   "version": "0.0.2",
-  "description": "A thin wrapping module around the AWS SDK",
-  "author": "Kerry Ritter",
+  "description": "A thin wrapping layer around the aws-sdk package for clean NestJS dependency injection.",
+  "author": "Kerry Ritter <ritter@kerryritter.com>",
+  "contributors": [
+    "Kerry Ritter <ritter@kerryritter.com>"
+  ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">= 10.13.0",
+    "npm": ">= 6.11.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeerMoneyDev/nest-aws-sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/BeerMoneyDev/nest-aws-sdk/issues"
+  },
+  "homepage": "https://github.com/BeerMoneyDev/nest-aws-sdk#readme",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.build.json",
@@ -83,8 +101,5 @@
   ],
   "files": [
     "dist"
-  ],
-  "publishConfig": {
-    "registry": "https://npm.fury.io/kerryritter/"
-  }
+  ]
 }

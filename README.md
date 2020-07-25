@@ -1,6 +1,6 @@
 <h1 align="center">nest-aws-sdk</h1>
 <div align="center">
-  <img src="" />
+  <img src="https://beermoneydev-assets.s3.amazonaws.com/nest-aws-sdk-logo.png" />
 </div>
 <br />
 <div align="center">
@@ -15,6 +15,12 @@
 * Helper test tools for creating mocked AWS clients.
 
 # How To Use
+
+## Install
+
+```bash
+npm install --save nest-aws-sdk aws-sdk
+```
 
 ## Basic Usage - Root-level feature registration
 
@@ -170,7 +176,7 @@ import { S3ManagerService } from './s3-manager.service';
 class S3ManagerModule {}
 ```
 
-## forRoot
+## AwsSdkModule.forRoot()
 
 `AwsSdkModule.forRoot()` is the simplest form of registration and uses statically assigned `options` values.
 
@@ -297,7 +303,7 @@ import { ConfigService, ConfigModule } from './config';
 })
 ```
 
-## forFeatures
+## AwsSdkModule.forFeatures()
 
 `AwsSdkModule.forFeatures()` creates the providers for the AWS clients you wish to use at a module-specific level. 
 
@@ -393,7 +399,7 @@ it('should call the list method and return the Content keys', async () => {
 
 # Stay In Touch
 
-* Author - [Kerry Ritter](https://twitter.com/kerryritter)
+* Author - [Kerry Ritter](https://twitter.com/kerryritter) and BeerMoneyDev
 
 ## License
 
