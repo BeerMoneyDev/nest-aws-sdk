@@ -1,14 +1,9 @@
-import { AwsService } from '../lib/types';
+import { AwsService, AsyncProvider } from '../lib/types';
 import { getAwsServiceToken } from '../lib/tokens';
-import { Provider, ClassProvider, ValueProvider, FactoryProvider, ExistingProvider } from '@nestjs/common';
+import { Provider } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
 
-type MockProvider<T> = Omit<ClassProvider<T>, 'provide'>
-  | Omit<ValueProvider<T>, 'provide'>
-  | Omit<FactoryProvider<T>, 'provide'>
-  | Omit<ExistingProvider<T>, 'provide'>;
-
-export function createAwsServiceMock(service: AwsService, provider: MockProvider<AwsService>): Provider<AwsService> {
+export function createAwsServiceMock(service: AwsService, provider: AsyncProvider<AwsService>): Provider<AwsService> {
   return {
     ...provider,
     provide: getAwsServiceToken(service),
