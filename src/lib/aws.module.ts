@@ -3,12 +3,13 @@ import { AwsServiceFactory } from './aws-service.factory';
 import {
   AwsService,
   AwsServiceType,
-  AwsServiceConfigurationOptionsFactoryProvider,
   AwsServiceWithServiceOptions,
   AwsServiceConfigurationOptionsFactory,
+  AsyncModuleProvider,
 } from './types';
 import { createAwsServiceProvider } from './aws-service-provider.factory';
-import { createAwsServiceConfigurationOptionsProvider } from './aws-service-configuration-options-provider.factory';
+import { createExportableProvider } from './module-utils';
+import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
 
 @Module({})
 export class AwsSdkModule {
@@ -29,7 +30,7 @@ export class AwsSdkModule {
   }
 
   static forRootAsync(options?: {
-    defaultServiceOptions?: AwsServiceConfigurationOptionsFactoryProvider;
+    defaultServiceOptions?: AsyncModuleProvider<AwsServiceConfigurationOptionsFactory>;
     services?: Array<AwsServiceType<AwsService> | AwsServiceWithServiceOptions>,
   }): DynamicModule {
     const module: DynamicModule = {
@@ -44,7 +45,8 @@ export class AwsSdkModule {
       return module;
     }
 
-    const serviceOptionsProvider = createAwsServiceConfigurationOptionsProvider(
+    const serviceOptionsProvider = createExportableProvider(
+      AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
       options?.defaultServiceOptions,
     );
 

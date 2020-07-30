@@ -1,17 +1,15 @@
-import { Type, DynamicModule, ForwardReference, ClassProvider, ValueProvider, FactoryProvider } from '@nestjs/common';
+import { DynamicModule, ValueProvider, FactoryProvider } from '@nestjs/common';
 import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 
-interface ImportableClassProvider<T>
-  extends ClassProvider<T>, Pick<DynamicModule, 'imports'> {
-}
+export interface AsyncModuleFactoryProvider<T>
+  extends Omit<FactoryProvider<T>, 'provide'>,
+    Pick<DynamicModule, 'imports'> {}
 
-interface ImportableFactoryProvider<T>
-  extends FactoryProvider<T>, Pick<DynamicModule, 'imports'> {
-}
+export interface AsyncModuleValueProvider<T> extends Omit<ValueProvider<T>, 'provide'> {}
 
-export type AsyncProvider<T> = Omit<ImportableClassProvider<T>, 'provide'>
-  | Omit<ImportableFactoryProvider<T>, 'provide'>
-  | Omit<ValueProvider<T>, 'provide'>;
+export type AsyncModuleProvider<T> =
+  | AsyncModuleFactoryProvider<T>
+  | AsyncModuleValueProvider<T>;
 
 export interface AwsServiceType<AwsService> {
   new (options: ServiceConfigurationOptions): AwsService;
@@ -27,6 +25,3 @@ export type AwsServiceWithServiceOptions = {
 export type AwsServiceConfigurationOptionsFactory =
   | Partial<ServiceConfigurationOptions>
   | (() => Partial<ServiceConfigurationOptions>);
-
-export type AwsServiceConfigurationOptionsFactoryProvider =
-  AsyncProvider<AwsServiceConfigurationOptionsFactory>;

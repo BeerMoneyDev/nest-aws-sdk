@@ -1,4 +1,4 @@
-import { createAwsServiceConfigurationOptionsProvider } from './aws-service-configuration-options-provider.factory';
+import { createExportableProvider } from './module-utils';
 import { isArray } from 'util';
 import { FactoryProvider, ValueProvider } from '@nestjs/common';
 import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
@@ -6,13 +6,13 @@ import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
 class FakeModule {}
 class FakeService {}
 
-describe('createAwsServiceConfigurationOptionsProvider()', () => {
+describe('createExportableProvider()', () => {
   it('should return empties when null', () => {
     const {
       exports,
       imports,
       provider,
-    } = createAwsServiceConfigurationOptionsProvider(null);
+    } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, null);
 
     expect(provider).toBeNull();
     expect(exports).toBeDefined();
@@ -28,7 +28,7 @@ describe('createAwsServiceConfigurationOptionsProvider()', () => {
       exports,
       imports,
       provider,
-    } = createAwsServiceConfigurationOptionsProvider({
+    } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, {
       useValue: { computeChecksums: true },
     });
 
@@ -49,7 +49,7 @@ describe('createAwsServiceConfigurationOptionsProvider()', () => {
       exports,
       imports,
       provider,
-    } = createAwsServiceConfigurationOptionsProvider({
+    } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, {
       useFactory: () => {
         return { computeChecksums: true };
       },
@@ -74,7 +74,7 @@ describe('createAwsServiceConfigurationOptionsProvider()', () => {
       exports,
       imports,
       provider,
-    } = createAwsServiceConfigurationOptionsProvider({
+    } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, {
       useFactory: () => {
         return { computeChecksums: true };
       },
