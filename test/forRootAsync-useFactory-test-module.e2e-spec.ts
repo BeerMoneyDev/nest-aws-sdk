@@ -7,9 +7,10 @@ import {
 } from '../src';
 import { S3, SharedIniFileCredentials } from 'aws-sdk';
 import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
+import { NestFactory } from '@nestjs/core';
 
 @Injectable()
-export class AppFactoryTestService {
+class AppService {
   constructor(
     @InjectAwsService(S3) readonly s3: S3,
     @InjectAwsDefaultOptions() readonly options: ServiceConfigurationOptions,
@@ -34,15 +35,15 @@ class ConfigModule {}
 
 @Module({
   imports: [AwsSdkModule.forFeatures([S3])],
-  providers: [AppFactoryTestService],
-  exports: [AppFactoryTestService],
+  providers: [AppService],
+  exports: [AppService],
 })
 class AppSubModule {}
 
 @Module({
   imports: [
     AppSubModule,
-    AwsSdkModule.forRoot({
+    AwsSdkModule.forRootAsync({
       defaultServiceOptions: {
         useFactory: (cs: ConfigService) => {
           return {
@@ -57,11 +58,11 @@ class AppSubModule {}
   providers: [],
   exports: [],
 })
-export class AppFactoryProviderWithSubModule {}
+class AppRootModule {}
 
 @Module({
   imports: [
-    AwsSdkModule.forRoot({
+    AwsSdkModule.forRootAsync({
       defaultServiceOptions: {
         useFactory: (cs: ConfigService) => {
           return {
@@ -74,7 +75,47 @@ export class AppFactoryProviderWithSubModule {}
     }),
     AwsSdkModule.forFeatures([S3]),
   ],
-  providers: [AppFactoryTestService],
+  providers: [AppService],
   exports: [],
 })
-export class AppFactoryProviderModule {}
+class AppRootNoSubModule {}
+
+describe('AwsSdkModule forRootAsync with useFactory', () => {
+  it('it should inject S3 into a service (root module only)', async () => {
+    const module = await NestFactory.createApplicationContext(
+      AppRootNoSubModule,
+      {
+        logger: false,
+      },
+    );
+
+    const service = module.get(AppService);
+
+    expect(service.s3).toBeDefined();
+    expect((service.s3.config.credentials as any).profile).toBe('kerryritter');
+
+    expect(service.options).toBeDefined();
+    expect((service.options.credentials as any).profile).toBe('kerryritter');
+
+    expect(service.factory).toBeDefined();
+  });
+
+  it('it should inject S3 into a service (with submodule)', async () => {
+    const module = await NestFactory.createApplicationContext(
+      AppRootModule,
+      {
+        logger: false,
+      },
+    );
+
+    const service = module.get(AppService);
+
+    expect(service.s3).toBeDefined();
+    expect((service.s3.config.credentials as any).profile).toBe('kerryritter');
+
+    expect(service.options).toBeDefined();
+    expect((service.options.credentials as any).profile).toBe('kerryritter');
+
+    expect(service.factory).toBeDefined();
+  });
+});

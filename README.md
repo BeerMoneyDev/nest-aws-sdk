@@ -11,7 +11,7 @@
 
 * Decorator for injecting AWS services.
 * An AWS service factory for on-the-fly AWS client creation.
-* A simple dependency injection model with AwsSdkModule.forRoot() and AwsSdkModule.forFeature().
+* A simple dependency injection model with AwsSdkModule.forRootAsync() and AwsSdkModule.forFeature().
 * Helper test tools for creating mocked AWS clients.
 
 # How To Use
@@ -22,15 +22,15 @@
 npm install --save nest-aws-sdk aws-sdk
 ```
 
-## Basic Usage
+## Basic Usage - Root-level feature registration
 
-Below is an example of injecting the AwsSdkModule into as root- and feature-level. This also demonstrates some of the testing tools provided to make mocking and spying on AWS clients easier.
+Below is an example of injecting the AwsSdkModule at the global root level. This also demonstrates some of the testing tools provided to make mocking and spying on AWS clients easier.
 
 ```ts
 // app.module.ts
 import { Module } from '@nestjs/common';
 import { AwsSdkModule } from 'nest-aws-sdk';
-import { SharedIniFileCredentials } from 'aws-sdk';
+import { SharedIniFileCredentials, S3 } from 'aws-sdk';
 import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 import { S3ManagerModule } from './s3-manager/s3-manager.module';
 
@@ -39,12 +39,12 @@ import { S3ManagerModule } from './s3-manager/s3-manager.module';
     S3ManagerModule,
     AwsSdkModule.forRoot({
       defaultServiceOptions: {
-        useValue: {
-          credentials: new SharedIniFileCredentials({
-            profile: 'my-profile',
-          }),
-        }
+        region: 'us-east-1',
+        credentials: new SharedIniFileCredentials({
+          profile: 'my-profile',
+        }),
       },
+      services: [S3],
     }),
   ],
   providers: [],
@@ -55,12 +55,11 @@ export class AppModule {}
 
 ```ts
 // s3-manager.module.ts
-import { Injectable } from '@nestjs/common';
-import { AwsSdkModule } from 'nest-aws-sdk';
-import { S3 } from 'aws-sdk';
+import { Module } from '@nestjs/common';
+import { S3ManagerService } from './s3-manager.service';
 
 @Module({
-  imports: [AwsSdkModule.forFeatures([S3])],
+  imports: [],
   providers: [S3ManagerService],
   exports: [S3ManagerService],
 })
@@ -91,7 +90,7 @@ export class S3ManagerService {
 // s3-manager.service.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import { S3 } from 'aws-sdk';
-import { createAwsServiceMock, createAwsServicePromisableSpy, getAwsServiceMock } from 'nest-aws-sdk/testing';
+import { createAwsServiceMock, createAwsServicePromisableSpy, getAwsServiceMock } from 'nest-aws-sdk/dist/testing';
 import { S3ManagerService } from './s3-manager.service';
 
 describe('S3ManagerService', () => {
@@ -130,13 +129,100 @@ describe('S3ManagerService', () => {
 });
 ```
 
+## Basic Usage - Module-level feature registration
+
+Below is an example of injecting the AwsSdkModule global providers at the root-level and the client feature registration at the feature-submodule.
+
+```ts
+// app.module.ts
+import { Module } from '@nestjs/common';
+import { AwsSdkModule } from 'nest-aws-sdk';
+import { SharedIniFileCredentials } from 'aws-sdk';
+import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
+import { S3ManagerModule } from './s3-manager/s3-manager.module';
+
+@Module({
+  imports: [
+    S3ManagerModule,
+    AwsSdkModule.forRootAsync({
+      defaultServiceOptions: {
+        useValue: {
+          region: 'us-east-1',
+          credentials: new SharedIniFileCredentials({
+            profile: 'my-profile',
+          }),
+        }
+      },
+    }),
+  ],
+  providers: [],
+  exports: [],
+})
+export class AppModule {}
+```
+
+```ts
+// s3-manager.module.ts
+import { Module } from '@nestjs/common';
+import { AwsSdkModule } from 'nest-aws-sdk';
+import { S3 } from 'aws-sdk';
+import { S3ManagerService } from './s3-manager.service';
+
+@Module({
+  imports: [AwsSdkModule.forFeatures([S3])],
+  providers: [S3ManagerService],
+  exports: [S3ManagerService],
+})
+class S3ManagerModule {}
+```
+
 ## AwsSdkModule.forRoot()
 
-`AwsSdkModule.forRoot()` currently supports two types of instantiation: 'useFactory' and 'useValue'. Support for ClassProvider and ExistingProvider coming soon.
+`AwsSdkModule.forRoot()` is the simplest form of registration and uses statically assigned `options` values.
+
+### options
+
+#### defaultServiceOptions?: Partial<ServiceConfigurationOptions> | (() => Partial<ServiceConfigurationOptions>);
+
+`defaultServiceOptions` is an optional object or object-returning method to get the aws-sdk `ServiceConfigurationOptions` object. This includes the `region`, `credentials`, and other client-level configuration.
+
+#### services?: Array<AwsServiceType<AwsService> | AwsServiceWithServiceOptions>,
+
+`services` can optionally be registered at the root level by passing an array of aws-sdk types, i.e. `S3`, or a `AwsServiceWithServiceOptions` object. These are interchangable and can be used as such:
+
+```ts
+import { AwsSdkModule } from 'nest-aws-sdk';
+import { CloudFront, S3, SharedIniFileCredentials } from 'aws-sdk';
+
+@Module({
+  imports: [
+    AwsSdkModule.forRoot({
+      services: [
+        S3,
+        {
+          service: CloudFront,
+          serviceOptions: {
+            credentials: new SharedIniFileCredentials({
+              profile: 'aws-nest-sdk',
+            }),
+          }
+        }
+      ],
+    }),
+  ],
+})
+class AppRootModule {}
+```
+
+**Note: the supplied values in serviceOptions will override the values supplied in the defaultServiceOptions object.**
+
+## forRootAsync
+
+`AwsSdkModule.forRootAsync()` is an injectable form of the `AwsSdkModule.forRoot()` import and currently supports two types of instantiation: 'useFactory' and 'useValue'. Support for ClassProvider and ExistingProvider coming soon.
 
 ### No parameters
 
-`AwsSdkModule.forRoot()` can be called with no provided parameters. This will allow the AWS clients to be created without any provided credential context, which is not uncommon when running in an AWS environment.
+`AwsSdkModule.forRootAsync()` can be called with no provided parameters. This will allow the AWS clients to be created without any provided credential context, which is not uncommon when running in an AWS environment.
 
 ```ts
 // app.module.ts
@@ -147,7 +233,7 @@ import { S3ManagerModule } from './s3-manager/s3-manager.module';
 @Module({
   imports: [
     S3ManagerModule,
-    AwsSdkModule.forRoot(),
+    AwsSdkModule.forRootAsync(),
   ],
   providers: [],
   exports: [],
@@ -170,9 +256,10 @@ import { S3ManagerModule } from './s3-manager/s3-manager.module';
 @Module({
   imports: [
     S3ManagerModule,
-    AwsSdkModule.forRoot({
+    AwsSdkModule.forRootAsync({
       defaultServiceOptions: {
         useValue: {
+          region: 'us-east-1',
           credentials: new SharedIniFileCredentials({
             profile: 'my-profile',
           }),
@@ -186,8 +273,6 @@ import { S3ManagerModule } from './s3-manager/s3-manager.module';
 export class AppModule {}
 ```
 
-
-
 ### useFactory
 
 useFactory allows for dynamic modification of the service options. This includes support for `imports` and `inject`.
@@ -200,10 +285,11 @@ import { ConfigService, ConfigModule } from './config';
 
 @Module({
   imports: [
-    AwsSdkModule.forRoot({
+    AwsSdkModule.forRootAsync({
       defaultServiceOptions: {
         useFactory: (cs: ConfigService) => {
           return {
+            region: 'us-east-1',
             credentials: cs.getCredentials(),
           };
         },
@@ -219,7 +305,9 @@ import { ConfigService, ConfigModule } from './config';
 
 ## AwsSdkModule.forFeatures()
 
-`AwsSdkModule.forFeatures()` creates the providers for the AWS clients you wish to use. This is not global, so the clients will need to be provided for each module.
+`AwsSdkModule.forFeatures()` creates the providers for the AWS clients you wish to use at a module-specific level. 
+
+**Note: forFeatures cannot be used in combination with root-level service registrations.**
 
 ### Basic usage
 
@@ -232,30 +320,6 @@ import { AwsSdkModule } from 'nest-aws-sdk';
 
 @Module({
   imports: [AwsSdkModule.forFeatures([S3])],
-  providers: [],
-  exports: [],
-})
-class AppSubModule {}
-```
-
-### Service-Level Customized Service Options
-
-At the `forFeature` level, it is possible to override the provided service options by passing in an object demonstrated below instead of the client type. Provider-style instantation will be provided in the future, but currently only static values are supported.
-
-```ts
-import { Module } from '@nestjs/common';
-import { S3 } from 'aws-sdk';
-import { AwsSdkModule } from 'nest-aws-sdk';
-
-@Module({
-  imports: [AwsSdkModule.forFeatures([
-    {
-      service: S3,
-      serviceOptions: {
-        /* AWS service options */
-      },
-    }
-  ])],
   providers: [],
   exports: [],
 })
