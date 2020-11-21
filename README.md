@@ -6,6 +6,12 @@
 <div align="center">
   <strong>A thin wrapping layer around the <a href="https://github.com/aws/aws-sdk-js" target="_blank">aws-sdk</a> package for clean <a href="https://github.com/nestjs">NestJS</a> dependency injection.</strong>
 </div>
+<br />
+<div align="center">
+<a href="https://www.npmjs.com/package/nest-aws-sdk"><img src="https://img.shields.io/npm/v/nest-aws-sdk.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/package/nest-aws-sdk"><img src="https://img.shields.io/npm/l/nest-aws-sdk.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/package/nest-aws-sdk"><img src="https://img.shields.io/npm/dm/nest-aws-sdk.svg" alt="NPM Downloads" /></a>
+</div>
 
 # Features
 
