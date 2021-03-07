@@ -1,27 +1,30 @@
+import { S3 } from '@aws-sdk/client-s3';
+import { fromIni } from '@aws-sdk/credential-provider-ini';
+import { Credentials, Provider } from '@aws-sdk/types';
 import { Injectable, Module } from '@nestjs/common';
-import {
-  InjectAwsService,
-  AwsSdkModule,
-  InjectAwsDefaultOptions,
-  AwsServiceFactory,
-} from '../src';
-import { S3, SharedIniFileCredentials } from 'aws-sdk';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 import { NestFactory } from '@nestjs/core';
+import {
+  AwsSdkModule,
+  AwsServiceFactory,
+  AwsServiceInputConfig,
+  InjectAwsDefaultOptions,
+  InjectAwsService,
+} from '../src';
 
 @Injectable()
 class AppService {
   constructor(
     @InjectAwsService(S3) readonly s3: S3,
-    @InjectAwsDefaultOptions() readonly options: ServiceConfigurationOptions,
+    @InjectAwsDefaultOptions() readonly options: AwsServiceInputConfig,
     readonly factory: AwsServiceFactory,
-  ) {}
+  ) {
+  }
 }
 
 @Injectable()
 class ConfigService {
   getProfile() {
-    return new SharedIniFileCredentials({
+    return fromIni({
       profile: 'kerryritter',
     });
   }
@@ -31,14 +34,16 @@ class ConfigService {
   providers: [ConfigService],
   exports: [ConfigService],
 })
-class ConfigModule {}
+class ConfigModule {
+}
 
 @Module({
   imports: [AwsSdkModule.forFeatures([S3])],
   providers: [AppService],
   exports: [AppService],
 })
-class AppSubModule {}
+class AppSubModule {
+}
 
 @Module({
   imports: [
@@ -58,7 +63,8 @@ class AppSubModule {}
   providers: [],
   exports: [],
 })
-class AppRootModule {}
+class AppRootModule {
+}
 
 @Module({
   imports: [
@@ -78,7 +84,16 @@ class AppRootModule {}
   providers: [AppService],
   exports: [],
 })
-class AppRootNoSubModule {}
+class AppRootNoSubModule {
+}
+
+type AwsServiceConfig = {
+  credentials: Provider<Credentials>
+};
+
+type AwsService = {
+  config: AwsServiceConfig
+};
 
 describe('AwsSdkModule forRootAsync with useFactory', () => {
   it('it should inject S3 into a service (root module only)', async () => {
@@ -89,13 +104,16 @@ describe('AwsSdkModule forRootAsync with useFactory', () => {
       },
     );
 
-    const service = module.get(AppService);
+    const service = module.get(AppService) as AppService & {
+      s3: AwsService
+      options: AwsServiceConfig
+    };
 
     expect(service.s3).toBeDefined();
-    expect((service.s3.config.credentials as any).profile).toBe('kerryritter');
+    expect((await service.s3.config.credentials()).accessKeyId).toBeDefined();
 
     expect(service.options).toBeDefined();
-    expect((service.options.credentials as any).profile).toBe('kerryritter');
+    expect((await service.options.credentials()).accessKeyId).toBeDefined();
 
     expect(service.factory).toBeDefined();
   });
@@ -108,13 +126,16 @@ describe('AwsSdkModule forRootAsync with useFactory', () => {
       },
     );
 
-    const service = module.get(AppService);
+    const service = module.get(AppService) as AppService & {
+      s3: AwsService
+      options: AwsServiceConfig
+    };
 
     expect(service.s3).toBeDefined();
-    expect((service.s3.config.credentials as any).profile).toBe('kerryritter');
+    expect((await service.s3.config.credentials()).accessKeyId).toBeDefined();
 
     expect(service.options).toBeDefined();
-    expect((service.options.credentials as any).profile).toBe('kerryritter');
+    expect((await service.options.credentials()).accessKeyId).toBeDefined();
 
     expect(service.factory).toBeDefined();
   });
