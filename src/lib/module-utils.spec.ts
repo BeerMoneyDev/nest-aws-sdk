@@ -1,10 +1,13 @@
-import { createExportableProvider } from './module-utils';
-import { isArray } from 'util';
 import { FactoryProvider, ValueProvider } from '@nestjs/common';
+import { isArray } from 'util';
+import { createExportableProvider } from './module-utils';
 import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
 
-class FakeModule {}
-class FakeService {}
+class FakeModule {
+}
+
+class FakeService {
+}
 
 describe('createExportableProvider()', () => {
   it('should return empties when null', () => {
@@ -29,13 +32,13 @@ describe('createExportableProvider()', () => {
       imports,
       provider,
     } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, {
-      useValue: { computeChecksums: true },
+      useValue: { maxAttempts: 4 },
     });
 
     expect(provider).toBeDefined();
     expect((provider as FactoryProvider).useFactory).toBeUndefined();
     expect((provider as ValueProvider).useValue).toBeDefined();
-    expect((provider as ValueProvider).useValue.computeChecksums).toBeTruthy();
+    expect((provider as ValueProvider).useValue.maxAttempts).toEqual(4);
     expect(exports).toBeDefined();
     expect(exports.length).toBe(1);
     expect(exports[0]).toBe(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN);
@@ -51,7 +54,7 @@ describe('createExportableProvider()', () => {
       provider,
     } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, {
       useFactory: () => {
-        return { computeChecksums: true };
+        return { maxAttempts: 4 };
       },
     });
 
@@ -59,8 +62,8 @@ describe('createExportableProvider()', () => {
     expect((provider as ValueProvider).useValue).toBeUndefined();
     expect((provider as FactoryProvider).useFactory).toBeDefined();
     expect(
-      (provider as FactoryProvider).useFactory().computeChecksums,
-    ).toBeTruthy();
+      (provider as FactoryProvider).useFactory().maxAttempts,
+    ).toEqual(4);
     expect(exports).toBeDefined();
     expect(exports.length).toBe(1);
     expect(exports[0]).toBe(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN);
@@ -76,7 +79,7 @@ describe('createExportableProvider()', () => {
       provider,
     } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, {
       useFactory: () => {
-        return { computeChecksums: true };
+        return { maxAttempts: 4 };
       },
       inject: [FakeService],
       imports: [FakeModule],
@@ -86,8 +89,8 @@ describe('createExportableProvider()', () => {
     expect((provider as ValueProvider).useValue).toBeUndefined();
     expect((provider as FactoryProvider).useFactory).toBeDefined();
     expect(
-      (provider as FactoryProvider).useFactory(null).computeChecksums,
-    ).toBeTruthy();
+      (provider as FactoryProvider).useFactory(null).maxAttempts,
+    ).toEqual(4);
     expect((provider as FactoryProvider).inject.length).toBe(1);
     expect((provider as FactoryProvider).inject[0]).toBe(FakeService);
     expect(exports).toBeDefined();

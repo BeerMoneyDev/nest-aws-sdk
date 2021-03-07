@@ -1,10 +1,12 @@
+import { fromIni } from '@aws-sdk/credential-provider-ini';
+import { Credentials, Provider } from '@aws-sdk/types';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AwsServiceFactory } from './aws-service.factory';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
-import { SharedIniFileCredentials } from 'aws-sdk';
+import { AwsServiceInputConfig } from './types';
 
 class FakeAwsService {
-  constructor(readonly options: ServiceConfigurationOptions) {}
+  constructor(readonly options: AwsServiceInputConfig) {
+  }
 }
 
 describe('AwsServiceFactory', () => {
@@ -23,18 +25,17 @@ describe('AwsServiceFactory', () => {
   });
 
   describe('constructor', () => {
-    it('should create a new instance of the class with the options passed in', () => {
+    it('should create a new instance of the class with the options passed in', async () => {
       const awsService = service.create(FakeAwsService, {
-        credentials: new SharedIniFileCredentials({
+        credentials: fromIni({
           profile: 'kerryritter',
         }),
       });
+      const credentials = await (awsService.options.credentials as Provider<Credentials>)();
 
       expect(awsService).toBeDefined();
       expect(awsService.constructor.name).toBe('FakeAwsService');
-      expect((awsService.options.credentials as any).profile).toBe(
-        'kerryritter',
-      );
+      expect(credentials.accessKeyId).toBeDefined();
     });
   });
   it('should create a new instance of the class with no options passed in', () => {

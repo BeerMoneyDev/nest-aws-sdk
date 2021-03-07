@@ -1,8 +1,9 @@
 import { InjectAwsService } from './aws-service.decorator';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
+import { AwsServiceInputConfig } from './types';
 
 class FakeAwsService {
-  constructor(readonly options: ServiceConfigurationOptions) {}
+  constructor(readonly options: AwsServiceInputConfig) {
+  }
 }
 
 describe('InjectAwsService', () => {

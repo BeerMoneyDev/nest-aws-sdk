@@ -1,5 +1,6 @@
+import { CloudFront } from '@aws-sdk/client-cloudfront';
+import { S3 } from '@aws-sdk/client-s3';
 import { getAwsServiceToken } from './tokens';
-import { S3, CloudFront } from 'aws-sdk';
 
 describe('getAwsServiceToken()', () => {
   it('should create expected token', () => {
