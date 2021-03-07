@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
-import { AwsServiceType } from './types';
+import { AwsServiceInputConfig, AwsServiceType } from './types';
 
 @Injectable()
 export class AwsServiceFactory {
   create<AwsService>(
     serviceConstructor: AwsServiceType<AwsService>,
-    serviceOptions?: ServiceConfigurationOptions,
-  ) {
+    serviceOptions?: AwsServiceInputConfig,
+  ): AwsService {
     return new serviceConstructor({
       ...(serviceOptions ?? {}),
     });

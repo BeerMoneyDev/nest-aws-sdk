@@ -1,14 +1,11 @@
 import { FactoryProvider } from '@nestjs/common';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 import { AwsServiceFactory } from './aws-service.factory';
-import {
-  getAwsServiceToken,
-  AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
-} from './tokens';
+import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, getAwsServiceToken } from './tokens';
 import {
   AwsService,
-  AwsServiceType,
   AwsServiceConfigurationOptionsFactory,
+  AwsServiceInputConfig,
+  AwsServiceType,
   AwsServiceWithServiceOptions,
 } from './types';
 
@@ -36,7 +33,7 @@ export function createAwsServiceProvider(
         ? serviceOptionsOverride
         : optionsFactory;
 
-      const defaultServiceOptions: Partial<ServiceConfigurationOptions> =
+      const defaultServiceOptions: Partial<AwsServiceInputConfig> =
         optionsFactoryToUse && typeof optionsFactoryToUse === 'function'
           ? (optionsFactoryToUse() as any)
           : optionsFactoryToUse;
