@@ -5,7 +5,8 @@ export interface AsyncModuleFactoryProvider<T>
   extends Omit<FactoryProvider<T>, 'provide'>,
     Pick<DynamicModule, 'imports'> {}
 
-export interface AsyncModuleValueProvider<T> extends Omit<ValueProvider<T>, 'provide'> {}
+export interface AsyncModuleValueProvider<T>
+  extends Omit<ValueProvider<T>, 'provide'> {}
 
 export type AsyncModuleProvider<T> =
   | AsyncModuleFactoryProvider<T>

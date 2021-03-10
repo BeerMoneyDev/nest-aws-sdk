@@ -24,7 +24,7 @@ class AppService {
     AwsSdkModule.forRoot({
       defaultServiceOptions: {
         credentials: new SharedIniFileCredentials({
-          profile: 'kerryritter',
+          profile: 'personal',
         }),
       },
       services: [
@@ -33,10 +33,10 @@ class AppService {
           service: CloudFront,
           serviceOptions: {
             credentials: new SharedIniFileCredentials({
-              profile: 'kerryritter2',
+              profile: 'personal2',
             }),
-          }
-        }
+          },
+        },
       ],
     }),
   ],
@@ -46,23 +46,22 @@ class AppRootModule {}
 
 describe('AwsSdkModule forRoot with services registration', () => {
   it('it should inject S3 into a test service', async () => {
-    const module = await NestFactory.createApplicationContext(
-      AppRootModule,
-      {
-        logger: false,
-      },
-    );
+    const module = await NestFactory.createApplicationContext(AppRootModule, {
+      logger: false,
+    });
 
     const service = module.get(AppService);
 
     expect(service.s3).toBeDefined();
-    expect((service.s3.config.credentials as any).profile).toBe('kerryritter');
+    expect((service.s3.config.credentials as any).profile).toBe('personal');
 
     expect(service.cloudFront).toBeDefined();
-    expect((service.cloudFront.config.credentials as any).profile).toBe('kerryritter2');
+    expect((service.cloudFront.config.credentials as any).profile).toBe(
+      'personal2',
+    );
 
     expect(service.options).toBeDefined();
-    expect((service.options.credentials as any).profile).toBe('kerryritter');
+    expect((service.options.credentials as any).profile).toBe('personal');
 
     expect(service.factory).toBeDefined();
   });

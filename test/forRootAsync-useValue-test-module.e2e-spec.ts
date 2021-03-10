@@ -32,7 +32,7 @@ class AppSubModule {}
       defaultServiceOptions: {
         useValue: {
           credentials: new SharedIniFileCredentials({
-            profile: 'kerryritter',
+            profile: 'personal',
           }),
         },
       },
@@ -49,7 +49,7 @@ class AppRootModule {}
       defaultServiceOptions: {
         useValue: {
           credentials: new SharedIniFileCredentials({
-            profile: 'kerryritter',
+            profile: 'personal',
           }),
         },
       },
@@ -72,29 +72,26 @@ describe('AwsSdkModule forRootAsync with useFactory', () => {
     const service = module.get(AppService);
 
     expect(service.s3).toBeDefined();
-    expect((service.s3.config.credentials as any).profile).toBe('kerryritter');
+    expect((service.s3.config.credentials as any).profile).toBe('personal');
 
     expect(service.options).toBeDefined();
-    expect((service.options.credentials as any).profile).toBe('kerryritter');
+    expect((service.options.credentials as any).profile).toBe('personal');
 
     expect(service.factory).toBeDefined();
   });
 
   it('it should inject S3 into a service (with submodule)', async () => {
-    const module = await NestFactory.createApplicationContext(
-      AppRootModule,
-      {
-        logger: false,
-      },
-    );
+    const module = await NestFactory.createApplicationContext(AppRootModule, {
+      logger: false,
+    });
 
     const service = module.get(AppService);
 
     expect(service.s3).toBeDefined();
-    expect((service.s3.config.credentials as any).profile).toBe('kerryritter');
+    expect((service.s3.config.credentials as any).profile).toBe('personal');
 
     expect(service.options).toBeDefined();
-    expect((service.options.credentials as any).profile).toBe('kerryritter');
+    expect((service.options.credentials as any).profile).toBe('personal');
 
     expect(service.factory).toBeDefined();
   });

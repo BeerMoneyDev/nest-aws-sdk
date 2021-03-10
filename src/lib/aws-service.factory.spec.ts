@@ -26,15 +26,13 @@ describe('AwsServiceFactory', () => {
     it('should create a new instance of the class with the options passed in', () => {
       const awsService = service.create(FakeAwsService, {
         credentials: new SharedIniFileCredentials({
-          profile: 'kerryritter',
+          profile: 'personal',
         }),
       });
 
       expect(awsService).toBeDefined();
       expect(awsService.constructor.name).toBe('FakeAwsService');
-      expect((awsService.options.credentials as any).profile).toBe(
-        'kerryritter',
-      );
+      expect((awsService.options.credentials as any).profile).toBe('personal');
     });
   });
   it('should create a new instance of the class with no options passed in', () => {
