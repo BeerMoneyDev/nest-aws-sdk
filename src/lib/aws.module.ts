@@ -15,7 +15,7 @@ import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
 export class AwsSdkModule {
   static forRoot(options?: {
     defaultServiceOptions?: AwsServiceConfigurationOptionsFactory;
-    services?: Array<AwsServiceType<AwsService> | AwsServiceWithServiceOptions>,
+    services?: Array<AwsServiceType<AwsService> | AwsServiceWithServiceOptions>;
   }) {
     if (!options) {
       return AwsSdkModule.forRootAsync();
@@ -30,9 +30,20 @@ export class AwsSdkModule {
   }
 
   static forRootAsync(options?: {
-    defaultServiceOptions?: AsyncModuleProvider<AwsServiceConfigurationOptionsFactory>;
-    services?: Array<AwsServiceType<AwsService> | AwsServiceWithServiceOptions>,
+    defaultServiceOptions?: AsyncModuleProvider<
+      AwsServiceConfigurationOptionsFactory
+    >;
+    services?: Array<AwsServiceType<AwsService> | AwsServiceWithServiceOptions>;
   }): DynamicModule {
+    if (!options) {
+      options = {};
+    }
+    if (!options?.defaultServiceOptions) {
+      options.defaultServiceOptions = {
+        useValue: {},
+      };
+    }
+
     const module: DynamicModule = {
       global: true,
       module: AwsSdkModule,
@@ -40,10 +51,6 @@ export class AwsSdkModule {
       providers: [AwsServiceFactory],
       exports: [AwsServiceFactory],
     };
-
-    if (!options?.defaultServiceOptions) {
-      return module;
-    }
 
     const serviceOptionsProvider = createExportableProvider(
       AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
@@ -62,10 +69,10 @@ export class AwsSdkModule {
       module.providers.push(serviceOptionsProvider.provider);
     }
 
-    const serviceProviders = options.services?.map(s => createAwsServiceProvider(s)) ?? [];
+    const serviceProviders =
+      options.services?.map(s => createAwsServiceProvider(s)) ?? [];
     if (serviceProviders.length) {
       serviceProviders.forEach(sp => {
-        // console.log('PROVIDE', { sp })
         module.providers.push(sp);
         module.exports.push(sp.provide);
       });
@@ -77,7 +84,8 @@ export class AwsSdkModule {
   static forFeatures(
     services: Array<AwsServiceType<AwsService> | AwsServiceWithServiceOptions>,
   ): DynamicModule {
-    const serviceProviders = services?.map(s => createAwsServiceProvider(s)) ?? [];
+    const serviceProviders =
+      services?.map(s => createAwsServiceProvider(s)) ?? [];
 
     const module: DynamicModule = {
       module: AwsSdkModule,

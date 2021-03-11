@@ -8,11 +8,10 @@ class FakeService {}
 
 describe('createExportableProvider()', () => {
   it('should return empties when null', () => {
-    const {
-      exports,
-      imports,
-      provider,
-    } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, null);
+    const { exports, imports, provider } = createExportableProvider(
+      AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
+      null,
+    );
 
     expect(provider).toBeNull();
     expect(exports).toBeDefined();
@@ -24,13 +23,12 @@ describe('createExportableProvider()', () => {
   });
 
   it('should return provider when useValue, but no imports', () => {
-    const {
-      exports,
-      imports,
-      provider,
-    } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, {
-      useValue: { computeChecksums: true },
-    });
+    const { exports, imports, provider } = createExportableProvider(
+      AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
+      {
+        useValue: { computeChecksums: true },
+      },
+    );
 
     expect(provider).toBeDefined();
     expect((provider as FactoryProvider).useFactory).toBeUndefined();
@@ -45,15 +43,14 @@ describe('createExportableProvider()', () => {
   });
 
   it('should return provider when useFactory, but no imports', () => {
-    const {
-      exports,
-      imports,
-      provider,
-    } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, {
-      useFactory: () => {
-        return { computeChecksums: true };
+    const { exports, imports, provider } = createExportableProvider(
+      AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
+      {
+        useFactory: () => {
+          return { computeChecksums: true };
+        },
       },
-    });
+    );
 
     expect(provider).toBeDefined();
     expect((provider as ValueProvider).useValue).toBeUndefined();
@@ -70,17 +67,16 @@ describe('createExportableProvider()', () => {
   });
 
   it('should return provider when useFactory, but no imports', () => {
-    const {
-      exports,
-      imports,
-      provider,
-    } = createExportableProvider(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN, {
-      useFactory: () => {
-        return { computeChecksums: true };
+    const { exports, imports, provider } = createExportableProvider(
+      AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
+      {
+        useFactory: () => {
+          return { computeChecksums: true };
+        },
+        inject: [FakeService],
+        imports: [FakeModule],
       },
-      inject: [FakeService],
-      imports: [FakeModule],
-    });
+    );
 
     expect(provider).toBeDefined();
     expect((provider as ValueProvider).useValue).toBeUndefined();
