@@ -1,6 +1,6 @@
 {
   "name": "nest-aws-sdk",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A thin wrapping layer around the aws-sdk package for clean NestJS dependency injection.",
   "author": "Kerry Ritter <ritter@kerryritter.com>",
   "contributors": [
