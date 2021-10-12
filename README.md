@@ -387,7 +387,7 @@ It is common to want to use the `.promise()` method returned by most AWS client 
 
 ```ts
 it('should call the list method and return the Content keys', async () => {
-  const listSpy = createAwsServicePromisableSpy(
+  const listSpy: jest.SpyInstance = createAwsServicePromisableSpy(
     s3, // the mocked object to spy on
     'listObjectsV2', // the method to spy on
     'resolve', // 'resolve' or 'reject'

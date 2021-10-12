@@ -37,7 +37,7 @@ export function createAwsServicePromisableSpy<T, K>(
   response: 'reject' | 'resolve',
   result?: K,
 ) {
-  return spyOn(object, method).and.returnValue(
+  return jest.spyOn(object, method).mockReturnValue(
     createAwsServicePromisableFunction(response, result),
   );
 }
