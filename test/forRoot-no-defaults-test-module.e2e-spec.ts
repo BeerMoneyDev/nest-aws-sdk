@@ -5,7 +5,7 @@ import {
   AwsServiceFactory,
   InjectAwsDefaultOptions,
 } from '../src';
-import { S3, SharedIniFileCredentials } from 'aws-sdk';
+import { S3 } from 'aws-sdk';
 import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 import { NestFactory } from '@nestjs/core';
 
