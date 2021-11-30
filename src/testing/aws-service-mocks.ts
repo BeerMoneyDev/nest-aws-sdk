@@ -33,11 +33,13 @@ export function createAwsServicePromisableFunction<T>(
 
 export function createAwsServicePromisableSpy<T, K>(
   object: T,
-  method: keyof T,
+  method: jest.FunctionPropertyNames<Required<T>>,
   response: 'reject' | 'resolve',
   result?: K,
 ) {
-  return jest.spyOn(object, method).mockReturnValue(
-    createAwsServicePromisableFunction(response, result),
-  );
+  return jest
+    .spyOn(object, method)
+    .mockReturnValue(
+      createAwsServicePromisableFunction(response, result) as any,
+    );
 }
