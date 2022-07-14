@@ -4,7 +4,7 @@ import { AwsServiceFactory } from './aws-service.factory';
 import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
 
 class FakeAwsService {
-  constructor(readonly options: ServiceConfigurationOptions) {}
+  constructor(readonly options: ServiceConfigurationOptions) { }
 }
 
 describe('createAwsServiceProvider()', () => {
@@ -17,7 +17,7 @@ describe('createAwsServiceProvider()', () => {
     const awsServiceFactory = new AwsServiceFactory();
     const options: ServiceConfigurationOptions = { computeChecksums: true };
 
-    const createSpy = spyOn(awsServiceFactory, 'create');
+    const createSpy = jest.spyOn(awsServiceFactory, 'create');
 
     const provider = createAwsServiceProvider(FakeAwsService);
     provider.useFactory(awsServiceFactory, options);
@@ -31,7 +31,7 @@ describe('createAwsServiceProvider()', () => {
     const awsServiceFactory = new AwsServiceFactory();
     const options: ServiceConfigurationOptions = { computeChecksums: true };
 
-    const createSpy = spyOn(awsServiceFactory, 'create');
+    const createSpy = jest.spyOn(awsServiceFactory, 'create');
 
     const provider = createAwsServiceProvider({
       service: FakeAwsService,
@@ -48,7 +48,7 @@ describe('createAwsServiceProvider()', () => {
     const awsServiceFactory = new AwsServiceFactory();
     const options: ServiceConfigurationOptions = { computeChecksums: true };
 
-    const createSpy = spyOn(awsServiceFactory, 'create');
+    const createSpy = jest.spyOn(awsServiceFactory, 'create');
 
     const provider = createAwsServiceProvider({
       service: FakeAwsService,
