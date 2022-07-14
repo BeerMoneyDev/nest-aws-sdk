@@ -34,7 +34,7 @@ jobs:
 
   release:
     docker:
-      - image: circleci/node:12.17.0
+      - image: circleci/node:16.13.0
     working_directory: ~/repo
     steps:
       - checkout
