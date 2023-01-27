@@ -1,3 +1,5 @@
+## [3.0.1](https://github.com/BeerMoneyDev/nest-aws-sdk/compare/v3.0.0...v3.0.1) (2023-01-27)
+
 # [3.0.0](https://github.com/BeerMoneyDev/nest-aws-sdk/compare/v2.1.0...v3.0.0) (2022-08-26)
 
 # [2.1.0](https://github.com/BeerMoneyDev/nest-aws-sdk/compare/v2.0.0...v2.1.0) (2021-11-30)
