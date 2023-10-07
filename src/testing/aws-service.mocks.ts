@@ -1,7 +1,8 @@
-import { AwsService, AsyncModuleProvider } from '../lib/types';
-import { getAwsServiceToken } from '../lib/tokens';
-import { Provider } from '@nestjs/common';
 import { TestingModule } from '@nestjs/testing';
+import { Provider } from '@nestjs/common';
+
+import { getAwsServiceToken } from '../lib/tokens';
+import { AwsService, AsyncModuleProvider } from '../lib/types';
 
 export function createAwsServiceMock(
   service: AwsService,

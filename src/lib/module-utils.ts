@@ -1,8 +1,9 @@
 import { Provider, ValueProvider } from '@nestjs/common';
+
 import {
+  AsyncModuleProvider,
   AsyncModuleFactoryProvider,
   AwsServiceConfigurationOptionsFactory,
-  AsyncModuleProvider,
 } from './types';
 
 function isFactoryProvider<T>(provider: AsyncModuleProvider<T>) {
@@ -15,14 +16,11 @@ function isValueProvider<T>(provider: AsyncModuleProvider<T>) {
 
 export function createExportableProvider(
   provide: string,
-  asyncModuleProvider?: AsyncModuleProvider<
-    AwsServiceConfigurationOptionsFactory
-  >,
+  asyncModuleProvider?: AsyncModuleProvider<AwsServiceConfigurationOptionsFactory>,
 ): { provider: Provider<any>; exports: any[]; imports: any[] } {
   if (isFactoryProvider(asyncModuleProvider)) {
-    const factoryProvider = asyncModuleProvider as AsyncModuleFactoryProvider<
-      AwsServiceConfigurationOptionsFactory
-    >;
+    const factoryProvider =
+      asyncModuleProvider as AsyncModuleFactoryProvider<AwsServiceConfigurationOptionsFactory>;
 
     const provider: Provider<any> = {
       provide,

@@ -1,5 +1,5 @@
+import { ServiceConfigurationOptions } from '..';
 import { InjectAwsService } from './aws-service.decorator';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 
 class FakeAwsService {
   constructor(readonly options: ServiceConfigurationOptions) {}

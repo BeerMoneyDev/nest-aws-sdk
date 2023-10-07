@@ -1,18 +1,19 @@
+import { fromIni } from '@aws-sdk/credential-providers';
 import { Injectable, Module } from '@nestjs/common';
-import {
-  InjectAwsService,
-  AwsSdkModule,
-  InjectAwsDefaultOptions,
-  AwsServiceFactory,
-} from '../src';
-import { S3, SharedIniFileCredentials } from 'aws-sdk';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
+import { S3Client } from '@aws-sdk/client-s3';
 import { NestFactory } from '@nestjs/core';
+import {
+  AwsSdkModule,
+  InjectAwsService,
+  AwsServiceFactory,
+  InjectAwsDefaultOptions,
+  ServiceConfigurationOptions,
+} from '../src';
 
 @Injectable()
 class AppService {
   constructor(
-    @InjectAwsService(S3) readonly s3: S3,
+    @InjectAwsService(S3Client) readonly s3: S3Client,
     @InjectAwsDefaultOptions() readonly options: ServiceConfigurationOptions,
     readonly factory: AwsServiceFactory,
   ) {}
@@ -21,7 +22,7 @@ class AppService {
 @Injectable()
 class ConfigService {
   getProfile() {
-    return new SharedIniFileCredentials({
+    return fromIni({
       profile: 'personal',
     });
   }
@@ -34,7 +35,7 @@ class ConfigService {
 class ConfigModule {}
 
 @Module({
-  imports: [AwsSdkModule.forFeatures([S3])],
+  imports: [AwsSdkModule.forFeatures([S3Client])],
   providers: [AppService],
   exports: [AppService],
 })
@@ -73,7 +74,7 @@ class AppRootModule {}
         inject: [ConfigService],
       },
     }),
-    AwsSdkModule.forFeatures([S3]),
+    AwsSdkModule.forFeatures([S3Client]),
   ],
   providers: [AppService],
   exports: [],

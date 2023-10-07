@@ -1,10 +1,12 @@
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
+import { Hash } from '@smithy/hash-node';
+
+import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
 import { createAwsServiceProvider } from './aws-service-provider.factory';
 import { AwsServiceFactory } from './aws-service.factory';
-import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
+import { ServiceConfigurationOptions } from '..';
 
 class FakeAwsService {
-  constructor(readonly options: ServiceConfigurationOptions) { }
+  constructor(readonly options: ServiceConfigurationOptions) {}
 }
 
 describe('createAwsServiceProvider()', () => {
@@ -15,50 +17,44 @@ describe('createAwsServiceProvider()', () => {
 
   it('should setup the expected factory to use a value', () => {
     const awsServiceFactory = new AwsServiceFactory();
-    const options: ServiceConfigurationOptions = { computeChecksums: true };
+    const options: ServiceConfigurationOptions = { md5: Hash };
 
     const createSpy = jest.spyOn(awsServiceFactory, 'create');
 
     const provider = createAwsServiceProvider(FakeAwsService);
     provider.useFactory(awsServiceFactory, options);
 
-    expect(createSpy).toHaveBeenCalledWith(FakeAwsService, {
-      computeChecksums: true,
-    });
+    expect(createSpy).toHaveBeenCalledWith(FakeAwsService, { md5: Hash });
   });
 
   it('should allow for an overriding config value', () => {
     const awsServiceFactory = new AwsServiceFactory();
-    const options: ServiceConfigurationOptions = { computeChecksums: true };
+    const options: ServiceConfigurationOptions = { md5: Hash };
 
     const createSpy = jest.spyOn(awsServiceFactory, 'create');
 
     const provider = createAwsServiceProvider({
       service: FakeAwsService,
-      serviceOptions: { computeChecksums: false },
+      serviceOptions: {},
     });
     provider.useFactory(awsServiceFactory, options);
 
-    expect(createSpy).toHaveBeenCalledWith(FakeAwsService, {
-      computeChecksums: false,
-    });
+    expect(createSpy).toHaveBeenCalledWith(FakeAwsService, {});
   });
 
   it('should allow for an overriding config function', () => {
     const awsServiceFactory = new AwsServiceFactory();
-    const options: ServiceConfigurationOptions = { computeChecksums: true };
+    const options: ServiceConfigurationOptions = { md5: Hash };
 
     const createSpy = jest.spyOn(awsServiceFactory, 'create');
 
     const provider = createAwsServiceProvider({
       service: FakeAwsService,
-      serviceOptions: () => ({ computeChecksums: false }),
+      serviceOptions: () => ({}),
     });
     provider.useFactory(awsServiceFactory, options);
 
-    expect(createSpy).toHaveBeenCalledWith(FakeAwsService, {
-      computeChecksums: false,
-    });
+    expect(createSpy).toHaveBeenCalledWith(FakeAwsService, {});
   });
 
   it('should setup the expected injects', () => {

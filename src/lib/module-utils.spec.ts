@@ -1,7 +1,8 @@
-import { createExportableProvider } from './module-utils';
-import { isArray } from 'util';
 import { FactoryProvider, ValueProvider } from '@nestjs/common';
+import { Hash } from '@smithy/hash-node';
+
 import { AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN } from './tokens';
+import { createExportableProvider } from './module-utils';
 
 class FakeModule {}
 class FakeService {}
@@ -16,30 +17,30 @@ describe('createExportableProvider()', () => {
     expect(provider).toBeNull();
     expect(exports).toBeDefined();
     expect(exports.length).toBe(0);
-    expect(isArray(exports)).toBeTruthy();
+    expect(Array.isArray(exports)).toBeTruthy();
     expect(imports).toBeDefined();
     expect(imports.length).toBe(0);
-    expect(isArray(imports)).toBeTruthy();
+    expect(Array.isArray(imports)).toBeTruthy();
   });
 
   it('should return provider when useValue, but no imports', () => {
     const { exports, imports, provider } = createExportableProvider(
       AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
       {
-        useValue: { computeChecksums: true },
+        useValue: { md5: Hash },
       },
     );
 
     expect(provider).toBeDefined();
     expect((provider as FactoryProvider).useFactory).toBeUndefined();
     expect((provider as ValueProvider).useValue).toBeDefined();
-    expect((provider as ValueProvider).useValue.computeChecksums).toBeTruthy();
+    expect((provider as ValueProvider).useValue.md5).toBeTruthy();
     expect(exports).toBeDefined();
     expect(exports.length).toBe(1);
     expect(exports[0]).toBe(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN);
     expect(imports).toBeDefined();
     expect(imports.length).toBe(0);
-    expect(isArray(imports)).toBeTruthy();
+    expect(Array.isArray(imports)).toBeTruthy();
   });
 
   it('should return provider when useFactory, but no imports', () => {
@@ -47,7 +48,7 @@ describe('createExportableProvider()', () => {
       AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
       {
         useFactory: () => {
-          return { computeChecksums: true };
+          return { md5: Hash };
         },
       },
     );
@@ -55,15 +56,13 @@ describe('createExportableProvider()', () => {
     expect(provider).toBeDefined();
     expect((provider as ValueProvider).useValue).toBeUndefined();
     expect((provider as FactoryProvider).useFactory).toBeDefined();
-    expect(
-      (provider as FactoryProvider).useFactory().computeChecksums,
-    ).toBeTruthy();
+    expect((provider as FactoryProvider).useFactory().md5).toBeTruthy();
     expect(exports).toBeDefined();
     expect(exports.length).toBe(1);
     expect(exports[0]).toBe(AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN);
     expect(imports).toBeDefined();
     expect(imports.length).toBe(0);
-    expect(isArray(imports)).toBeTruthy();
+    expect(Array.isArray(imports)).toBeTruthy();
   });
 
   it('should return provider when useFactory, but no imports', () => {
@@ -71,7 +70,7 @@ describe('createExportableProvider()', () => {
       AWS_SERVICE_CONFIGURATION_OPTIONS_FACTORY_TOKEN,
       {
         useFactory: () => {
-          return { computeChecksums: true };
+          return { md5: Hash };
         },
         inject: [FakeService],
         imports: [FakeModule],
@@ -81,9 +80,7 @@ describe('createExportableProvider()', () => {
     expect(provider).toBeDefined();
     expect((provider as ValueProvider).useValue).toBeUndefined();
     expect((provider as FactoryProvider).useFactory).toBeDefined();
-    expect(
-      (provider as FactoryProvider).useFactory(null).computeChecksums,
-    ).toBeTruthy();
+    expect((provider as FactoryProvider).useFactory(null).md5).toBeTruthy();
     expect((provider as FactoryProvider).inject.length).toBe(1);
     expect((provider as FactoryProvider).inject[0]).toBe(FakeService);
     expect(exports).toBeDefined();
