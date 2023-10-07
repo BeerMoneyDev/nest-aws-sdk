@@ -1,9 +1,13 @@
+import { CloudFrontClient } from '@aws-sdk/client-cloudfront';
+import { S3Client } from '@aws-sdk/client-s3';
+
 import { getAwsServiceToken } from './tokens';
-import { S3, CloudFront } from 'aws-sdk';
 
 describe('getAwsServiceToken()', () => {
   it('should create expected token', () => {
-    expect(getAwsServiceToken(S3)).toEqual('AWS_SERVICE_S3');
-    expect(getAwsServiceToken(CloudFront)).toEqual('AWS_SERVICE_CLOUDFRONT');
+    expect(getAwsServiceToken(S3Client)).toEqual('AWS_SERVICE_S3CLIENT');
+    expect(getAwsServiceToken(CloudFrontClient)).toEqual(
+      'AWS_SERVICE_CLOUDFRONTCLIENT',
+    );
   });
 });

@@ -1,25 +1,27 @@
+import { fromIni } from '@aws-sdk/credential-providers';
 import { Injectable, Module } from '@nestjs/common';
+import { S3Client } from '@aws-sdk/client-s3';
+import { NestFactory } from '@nestjs/core';
+
 import {
-  InjectAwsService,
   AwsSdkModule,
+  InjectAwsService,
   AwsServiceFactory,
   InjectAwsDefaultOptions,
+  ServiceConfigurationOptions,
 } from '../src';
-import { S3, SharedIniFileCredentials } from 'aws-sdk';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
-import { NestFactory } from '@nestjs/core';
 
 @Injectable()
 class AppValueProviderForRootTestService {
   constructor(
-    @InjectAwsService(S3) readonly s3: S3,
+    @InjectAwsService(S3Client) readonly s3: S3Client,
     @InjectAwsDefaultOptions() readonly options: ServiceConfigurationOptions,
     readonly factory: AwsServiceFactory,
   ) {}
 }
 
 @Module({
-  imports: [AwsSdkModule.forFeatures([S3])],
+  imports: [AwsSdkModule.forFeatures([S3Client])],
   providers: [AppValueProviderForRootTestService],
   exports: [AppValueProviderForRootTestService],
 })
@@ -30,7 +32,7 @@ class AppSubModule {}
     AppSubModule,
     AwsSdkModule.forRoot({
       defaultServiceOptions: {
-        credentials: new SharedIniFileCredentials({
+        credentials: fromIni({
           profile: 'personal',
         }),
       },
@@ -45,12 +47,12 @@ class AppRootModule {}
   imports: [
     AwsSdkModule.forRoot({
       defaultServiceOptions: {
-        credentials: new SharedIniFileCredentials({
+        credentials: fromIni({
           profile: 'personal',
         }),
       },
     }),
-    AwsSdkModule.forFeatures([S3]),
+    AwsSdkModule.forFeatures([S3Client]),
   ],
   providers: [AppValueProviderForRootTestService],
 })

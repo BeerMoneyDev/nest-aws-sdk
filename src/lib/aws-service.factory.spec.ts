@@ -1,7 +1,8 @@
+import { fromIni } from '@aws-sdk/credential-providers';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { AwsServiceFactory } from './aws-service.factory';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
-import { SharedIniFileCredentials } from 'aws-sdk';
+import { ServiceConfigurationOptions } from '..';
 
 class FakeAwsService {
   constructor(readonly options: ServiceConfigurationOptions) {}
@@ -25,7 +26,7 @@ describe('AwsServiceFactory', () => {
   describe('constructor', () => {
     it('should create a new instance of the class with the options passed in', () => {
       const awsService = service.create(FakeAwsService, {
-        credentials: new SharedIniFileCredentials({
+        credentials: fromIni({
           profile: 'personal',
         }),
       });

@@ -1,20 +1,23 @@
+import { CloudFrontClient } from '@aws-sdk/client-cloudfront';
+import { fromIni } from '@aws-sdk/credential-providers';
 import { Injectable, Module } from '@nestjs/common';
+import { S3Client } from '@aws-sdk/client-s3';
+import { NestFactory } from '@nestjs/core';
+
 import {
   InjectAwsService,
   AwsSdkModule,
   AwsServiceFactory,
   InjectAwsDefaultOptions,
+  AwsClientConfigType,
 } from '../src';
-import { S3, SharedIniFileCredentials, CloudFront } from 'aws-sdk';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
-import { NestFactory } from '@nestjs/core';
 
 @Injectable()
 class AppService {
   constructor(
-    @InjectAwsService(S3) readonly s3: S3,
-    @InjectAwsService(CloudFront) readonly cloudFront: CloudFront,
-    @InjectAwsDefaultOptions() readonly options: ServiceConfigurationOptions,
+    @InjectAwsService(S3Client) readonly s3: S3Client,
+    @InjectAwsService(CloudFrontClient) readonly cloudFront: CloudFrontClient,
+    @InjectAwsDefaultOptions() readonly options: AwsClientConfigType,
     readonly factory: AwsServiceFactory,
   ) {}
 }
@@ -23,16 +26,16 @@ class AppService {
   imports: [
     AwsSdkModule.forRoot({
       defaultServiceOptions: {
-        credentials: new SharedIniFileCredentials({
+        credentials: fromIni({
           profile: 'personal',
         }),
       },
       services: [
-        S3,
+        S3Client,
         {
-          service: CloudFront,
+          service: CloudFrontClient,
           serviceOptions: {
-            credentials: new SharedIniFileCredentials({
+            credentials: fromIni({
               profile: 'personal2',
             }),
           },

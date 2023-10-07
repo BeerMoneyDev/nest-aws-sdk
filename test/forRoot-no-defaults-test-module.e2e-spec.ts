@@ -1,30 +1,31 @@
 import { Injectable, Module } from '@nestjs/common';
+import { S3Client } from '@aws-sdk/client-s3';
+import { NestFactory } from '@nestjs/core';
+
 import {
   InjectAwsService,
   AwsSdkModule,
   AwsServiceFactory,
   InjectAwsDefaultOptions,
+  AwsClientConfigType,
 } from '../src';
-import { S3 } from 'aws-sdk';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
-import { NestFactory } from '@nestjs/core';
 
 @Injectable()
 class AppValueProviderForRootTestService {
   constructor(
-    @InjectAwsService(S3) readonly s3: S3,
-    @InjectAwsDefaultOptions() readonly options: ServiceConfigurationOptions,
+    @InjectAwsService(S3Client) readonly s3: S3Client,
+    @InjectAwsDefaultOptions() readonly options: AwsClientConfigType,
     readonly factory: AwsServiceFactory,
   ) {}
 }
 
 @Module({
-  imports: [AwsSdkModule.forRoot(), AwsSdkModule.forFeatures([S3])],
+  imports: [AwsSdkModule.forRoot(), AwsSdkModule.forFeatures([S3Client])],
   providers: [AppValueProviderForRootTestService],
 })
 class AppRootModule {}
 
-fdescribe('AwsSdkModule forRoot no default service options', () => {
+describe('AwsSdkModule forRoot no default service options', () => {
   it('it should inject S3 into a service', async () => {
     const module = await NestFactory.createApplicationContext(AppRootModule, {
       logger: false,

@@ -1,5 +1,6 @@
+import { S3ClientConfigType } from '@aws-sdk/client-s3';
+import { CloudFrontClientConfigType } from '@aws-sdk/client-cloudfront';
 import { DynamicModule, ValueProvider, FactoryProvider } from '@nestjs/common';
-import { ServiceConfigurationOptions } from 'aws-sdk/lib/service';
 
 export interface AsyncModuleFactoryProvider<T>
   extends Omit<FactoryProvider<T>, 'provide'>,
@@ -10,6 +11,13 @@ export type AsyncModuleValueProvider<T> = Omit<ValueProvider<T>, 'provide'>;
 export type AsyncModuleProvider<T> =
   | AsyncModuleFactoryProvider<T>
   | AsyncModuleValueProvider<T>;
+
+export type ServiceConfigurationOptions = S3ClientConfigType &
+  CloudFrontClientConfigType;
+
+export type AwsClientConfigType =
+  | S3ClientConfigType
+  | CloudFrontClientConfigType;
 
 export interface AwsServiceType<AwsService> {
   new (options: ServiceConfigurationOptions): AwsService;
