@@ -4,7 +4,7 @@
 </div>
 <br />
 <div align="center">
-  <strong>A thin wrapping layer around the <a href="https://github.com/aws/aws-sdk-js" target="_blank">aws-sdk</a> package for clean <a href="https://github.com/nestjs">NestJS</a> dependency injection.</strong>
+  <strong>A thin wrapping layer around the <a href="https://github.com/aws/aws-sdk-js" target="_blank">aws-sdk</a> (AWS SDK v2) package for clean <a href="https://github.com/nestjs">NestJS</a> dependency injection.</strong>
 </div>
 <br />
 <div align="center">
@@ -15,10 +15,10 @@
 
 # Features
 
-* Decorator for injecting AWS services.
-* An AWS service factory for on-the-fly AWS client creation.
-* A simple dependency injection model with AwsSdkModule.forRootAsync() and AwsSdkModule.forFeature().
-* Helper test tools for creating mocked AWS clients.
+- Decorator for injecting AWS services.
+- An AWS service factory for on-the-fly AWS client creation.
+- A simple dependency injection model with AwsSdkModule.forRootAsync() and AwsSdkModule.forFeature().
+- Helper test tools for creating mocked AWS clients.
 
 # How To Use
 
@@ -80,10 +80,7 @@ import { S3 } from 'aws-sdk';
 
 @Injectable()
 export class S3ManagerService {
-  constructor(
-    @InjectAwsService(S3) private readonly s3: S3,
-  ) {
-  }
+  constructor(@InjectAwsService(S3) private readonly s3: S3) {}
 
   async listBucketContents(bucket: string) {
     const response = await this.s3.listObjectsV2({ Bucket: bucket }).promise();
@@ -96,7 +93,11 @@ export class S3ManagerService {
 // s3-manager.service.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import { S3 } from 'aws-sdk';
-import { createAwsServiceMock, createAwsServicePromisableSpy, getAwsServiceMock } from 'nest-aws-sdk/dist/testing';
+import {
+  createAwsServiceMock,
+  createAwsServicePromisableSpy,
+  getAwsServiceMock,
+} from 'nest-aws-sdk/dist/testing';
 import { S3ManagerService } from './s3-manager.service';
 
 describe('S3ManagerService', () => {
@@ -108,19 +109,19 @@ describe('S3ManagerService', () => {
           createAwsServiceMock(S3, {
             useValue: {
               listObjectsV2: () => null,
-            }
+            },
           }),
         ],
       }).compile();
 
       const service = module.get(S3ManagerService);
-    
+
       const listSpy = createAwsServicePromisableSpy(
         getAwsServiceMock(module, S3),
         'listObjectsV2',
         'resolve',
         {
-          Contents: [ { Key: 'myKey' } ],
+          Contents: [{ Key: 'myKey' }],
         },
       );
 
@@ -131,7 +132,7 @@ describe('S3ManagerService', () => {
       expect(listSpy).toHaveBeenCalledTimes(1);
       expect(listSpy).toHaveBeenCalledWith({ Bucket: 'myBucket' });
     });
-  })
+  });
 });
 ```
 
@@ -157,7 +158,7 @@ import { S3ManagerModule } from './s3-manager/s3-manager.module';
           credentials: new SharedIniFileCredentials({
             profile: 'my-profile',
           }),
-        }
+        },
       },
     }),
   ],
@@ -211,8 +212,8 @@ import { CloudFront, S3, SharedIniFileCredentials } from 'aws-sdk';
             credentials: new SharedIniFileCredentials({
               profile: 'aws-nest-sdk',
             }),
-          }
-        }
+          },
+        },
       ],
     }),
   ],
@@ -237,10 +238,7 @@ import { AwsSdkModule } from 'nest-aws-sdk';
 import { S3ManagerModule } from './s3-manager/s3-manager.module';
 
 @Module({
-  imports: [
-    S3ManagerModule,
-    AwsSdkModule.forRootAsync(),
-  ],
+  imports: [S3ManagerModule, AwsSdkModule.forRootAsync()],
   providers: [],
   exports: [],
 })
@@ -269,7 +267,7 @@ import { S3ManagerModule } from './s3-manager/s3-manager.module';
           credentials: new SharedIniFileCredentials({
             profile: 'my-profile',
           }),
-        }
+        },
       },
     }),
   ],
@@ -311,13 +309,13 @@ import { ConfigService, ConfigModule } from './config';
 
 ## AwsSdkModule.forFeatures()
 
-`AwsSdkModule.forFeatures()` creates the providers for the AWS clients you wish to use at a module-specific level. 
+`AwsSdkModule.forFeatures()` creates the providers for the AWS clients you wish to use at a module-specific level.
 
 **Note: forFeatures cannot be used in combination with root-level service registrations.**
 
 ### Basic usage
 
-To provide clients to the module context, pass the client constructor symbol to the `AwsSdkModule.forFeatures()` method. Note, it is best to import the client directly from `aws-sdk` instead of from deeper paths - the deeper paths may produce unexpected behaviors. 
+To provide clients to the module context, pass the client constructor symbol to the `AwsSdkModule.forFeatures()` method. Note, it is best to import the client directly from `aws-sdk` instead of from deeper paths - the deeper paths may produce unexpected behaviors.
 
 ```ts
 import { Module } from '@nestjs/common';
@@ -366,12 +364,11 @@ const module: TestingModule = await Test.createTestingModule({
     createAwsServiceMock(S3, {
       useValue: {
         listObjectsV2: () => null,
-      }
+      },
     }),
   ],
 }).compile();
 ```
-
 
 ### getAwsServiceMock
 
@@ -391,7 +388,7 @@ it('should call the list method and return the Content keys', async () => {
     s3, // the mocked object to spy on
     'listObjectsV2', // the method to spy on
     'resolve', // 'resolve' or 'reject'
-    { Contents: [ { Key: 'myKey' } ] }, // the value to resolve or reject
+    { Contents: [{ Key: 'myKey' }] }, // the value to resolve or reject
   );
 
   const result = await service.listBucketContents('myBucket');
@@ -405,7 +402,7 @@ it('should call the list method and return the Content keys', async () => {
 
 # Stay In Touch
 
-* Author - [Kerry Ritter](https://twitter.com/kerryritter) and BeerMoneyDev
+- Author - [Kerry Ritter](https://twitter.com/kerryritter) and BeerMoneyDev
 
 ## License
 
